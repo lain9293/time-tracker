@@ -5,30 +5,40 @@ import localStore from './utils/localStorage.js'
 import timeSum from './utils/timeCalc.js'
 
 const App = () => {
-  const [days, setDays] = useState(localStore.getItem('days', 'Array'));
-  const [newDay, setNewDay] = useState(new Date());
-  const [currentDay, setCurrentDay] = useState('');
+  const [days, setDays] = useState(
+    localStore.getItem('days', 'Array').map((d) => {
+      return { ...d, date: Date(d.date) }
+    })
+  )
+  const [newDay, setNewDay] = useState(new Date())
+  const [currentDay, setCurrentDay] = useState('')
   const [newAction, setNewAction] = useState({
     id: uuidv4(),
     description: '',
     time: '',
-  });
+  })
 
   const dateOptions = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  };
+  }
 
   const addNewDay = () => {
     const id = uuidv4()
-    setDays([...days, { id, date: newDay, actions: [] }])
+    const newDays = [...days, { id, date: newDay, actions: [] }]
+    setDays(newDays)
     setCurrentDay(id)
-  };
+    localStore.setItem('days', newDays)
+  }
 
   const selectCurrentDay = (id) => {
-    setCurrentDay(id)
-  };
+    if (currentDay === id) {
+      setCurrentDay('')
+    } else {
+      setCurrentDay(id)
+    }
+  }
 
   const addNewAction = (e, id) => {
     e.preventDefault()
@@ -41,30 +51,70 @@ const App = () => {
     setDays(newDays)
     localStore.setItem('days', newDays)
     setNewAction({ id: uuidv4(), description: '', time: '' })
-  };
+  }
+
+  const deleteDay = (id) => {
+    const newDays = days.filter((d) => d.id !== id)
+    setDays(newDays)
+    localStore.setItem('days', newDays)
+  }
+
+  const deleteActive = (idDay, idActive) => {
+    const newDays = days.map((d) => {
+      if (d.id === idDay) {
+        d.actions = d.actions.filter(a => a.id !== idActive);
+      }
+      return d;
+    })
+    setDays(newDays)
+    localStore.setItem('days', newDays)
+  }
+
+  const formatDate = (date) => {
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleString('ru', dateOptions)
+    }
+    return date.toLocaleString('ru', dateOptions)
+  }
 
   return (
     <div>
       <ul>
         {days.map((d) => (
-          <li key={d.id} onClick={() => selectCurrentDay(d.id)}>
-            Date: {d.date.toLocaleString('ru', dateOptions)} Time sum:
-            {d.actions.length &&
-              d.actions.map((a) => a.time).reduce((acc, a) => timeSum(a, acc))}
-            {currentDay === d.id ? ' << Current day' : ''}
+          <li key={d.id}>
+            <span onClick={() => selectCurrentDay(d.id)}>
+              Дата: {formatDate(d.date)} Сумма времени:
+              {d.actions.length &&
+                d.actions
+                  .map((a) => a.time)
+                  .reduce((acc, a) => timeSum(a, acc))}
+            </span>
+            {currentDay === d.id ? (
+              <span>
+                <span>{'  << Текущий день  '}</span>
+                <input
+                  type="button"
+                  value="Удалить день"
+                  onClick={() => deleteDay(d.id)}
+                />
+              </span>
+            ) : (
+              ''
+            )}
             {currentDay === d.id && (
               <div>
                 <ul>
                   {d.actions.map((a) => (
                     <li key={a.id}>
-                      Description: {a.description} Time: {a.time}
+                      Описание: {a.description} Время: {a.time} 
+                      <input type="button" value="Удалить активность" onClick={() => deleteActive(d.id, a.id)}/>
                     </li>
                   ))}
                 </ul>
                 <form type="submit" onSubmit={(e) => addNewAction(e, d.id)}>
                   <input
                     type="text"
-                    placeholder="Description"
+                    placeholder="Описание"
                     value={newAction.description}
                     onChange={(e) => {
                       setNewAction({
@@ -83,7 +133,7 @@ const App = () => {
                       })
                     }}
                   />
-                  <input type="submit" value="Add" />
+                  <input type="submit" value="Добавить" />
                 </form>
               </div>
             )}
@@ -97,7 +147,7 @@ const App = () => {
           setNewDay(e.target.value)
         }}
       />
-      <input type="button" value="New day" onClick={() => addNewDay()} />
+      <input type="button" value="Добавить день" onClick={() => addNewDay()} />
     </div>
   )
 }

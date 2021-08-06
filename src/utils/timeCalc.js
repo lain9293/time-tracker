@@ -7,7 +7,7 @@ const timeSum = (t1, t2) => {
     rH++;
     rM -= 60;
   }
-  return `${rH}:${rM}`;
+  return `${rH < 10 ? '0' + rH : rH}:${rM < 10 ? '0' + rM : rM}`;
 }
 
 export default timeSum;
