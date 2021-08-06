@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import uuidv4 from './utils/uuid.js';
-import localStore from './utils/localStorage.js';
-import timeSum from './utils/timeCalc.js';
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
+import uuidv4 from './utils/uuid.js'
+import localStore from './utils/localStorage.js'
+import timeSum from './utils/timeCalc.js'
 
 const App = () => {
   const [days, setDays] = useState(localStore.getItem('days', 'Array'));
+  const [newDay, setNewDay] = useState(new Date());
   const [currentDay, setCurrentDay] = useState('');
   const [newAction, setNewAction] = useState({
     id: uuidv4(),
@@ -20,26 +21,26 @@ const App = () => {
   };
 
   const addNewDay = () => {
-    const id = uuidv4();
-    setDays([...days, { id, date: new Date(), actions: [] }]);
-    setCurrentDay(id);
+    const id = uuidv4()
+    setDays([...days, { id, date: newDay, actions: [] }])
+    setCurrentDay(id)
   };
 
   const selectCurrentDay = (id) => {
-    setCurrentDay(id);
+    setCurrentDay(id)
   };
 
   const addNewAction = (e, id) => {
-    e.preventDefault();
+    e.preventDefault()
     const newDays = days.map((d) => {
       if (d.id === id) {
-        d.actions = [...d.actions, newAction];
+        d.actions = [...d.actions, newAction]
       }
-      return d;
-    });
-    setDays(newDays);
-    localStore.setItem('days', newDays);
-    setNewAction({ id: uuidv4(), description: '', time: '' });
+      return d
+    })
+    setDays(newDays)
+    localStore.setItem('days', newDays)
+    setNewAction({ id: uuidv4(), description: '', time: '' })
   };
 
   return (
@@ -69,7 +70,7 @@ const App = () => {
                       setNewAction({
                         ...newAction,
                         description: e.target.value,
-                      });
+                      })
                     }}
                   />
                   <input
@@ -79,7 +80,7 @@ const App = () => {
                       setNewAction({
                         ...newAction,
                         time: e.target.value,
-                      });
+                      })
                     }}
                   />
                   <input type="submit" value="Add" />
@@ -89,9 +90,16 @@ const App = () => {
           </li>
         ))}
       </ul>
+      <input
+        type="date"
+        value={newDay}
+        onChange={(e) => {
+          setNewDay(e.target.value)
+        }}
+      />
       <input type="button" value="New day" onClick={() => addNewDay()} />
     </div>
-  );
-};
+  )
+}
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'))
