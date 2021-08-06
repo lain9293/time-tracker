@@ -5,11 +5,7 @@ import localStore from './utils/localStorage.js'
 import timeSum from './utils/timeCalc.js'
 
 const App = () => {
-  const [days, setDays] = useState(
-    localStore.getItem('days', 'Array').map((d) => {
-      return { ...d, date: Date(d.date) }
-    })
-  )
+  const [days, setDays] = useState(localStore.getItem('days', 'Array'))
   const [newDay, setNewDay] = useState(new Date())
   const [currentDay, setCurrentDay] = useState('')
   const [newAction, setNewAction] = useState({
@@ -62,9 +58,9 @@ const App = () => {
   const deleteActive = (idDay, idActive) => {
     const newDays = days.map((d) => {
       if (d.id === idDay) {
-        d.actions = d.actions.filter(a => a.id !== idActive);
+        d.actions = d.actions.filter((a) => a.id !== idActive)
       }
-      return d;
+      return d
     })
     setDays(newDays)
     localStore.setItem('days', newDays)
@@ -106,8 +102,12 @@ const App = () => {
                 <ul>
                   {d.actions.map((a) => (
                     <li key={a.id}>
-                      Описание: {a.description} Время: {a.time} 
-                      <input type="button" value="Удалить активность" onClick={() => deleteActive(d.id, a.id)}/>
+                      Описание: {a.description} Время: {a.time}
+                      <input
+                        type="button"
+                        value="Удалить активность"
+                        onClick={() => deleteActive(d.id, a.id)}
+                      />
                     </li>
                   ))}
                 </ul>
