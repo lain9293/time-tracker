@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/time-tracker/static/js/main.e5310103.chunk.js",
-    "main.js.map": "/time-tracker/static/js/main.e5310103.chunk.js.map",
+    "main.js": "/time-tracker/static/js/main.87f38f98.chunk.js",
+    "main.js.map": "/time-tracker/static/js/main.87f38f98.chunk.js.map",
     "runtime-main.js": "/time-tracker/static/js/runtime-main.4d476c20.js",
     "runtime-main.js.map": "/time-tracker/static/js/runtime-main.4d476c20.js.map",
     "static/js/2.78c81904.chunk.js": "/time-tracker/static/js/2.78c81904.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.4d476c20.js",
     "static/js/2.78c81904.chunk.js",
-    "static/js/main.e5310103.chunk.js"
+    "static/js/main.87f38f98.chunk.js"
   ]
 }
