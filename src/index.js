@@ -12,6 +12,7 @@ const App = () => {
     id: uuidv4(),
     description: '',
     time: '',
+    hide: false,
   })
 
   const dateOptions = {
@@ -55,6 +56,30 @@ const App = () => {
     localStore.setItem('days', newDays)
   }
 
+  const hideTo = (id) => {
+    const newDays = [...days];
+    for (let i = 0; i < newDays.length; i++) {
+      if (newDays[i].id !== id) {
+        newDays[i].hide = true;
+      }
+      else {
+        newDays[i].hide = true;
+        break;
+      }
+    }
+    setDays(newDays)
+    localStore.setItem('days', newDays)
+  }
+
+  const showHidden = () => {
+    const newDays = days.map((d) => {
+      d.hide = false;
+      return d;
+    })
+    setDays(newDays)
+    localStore.setItem('days', newDays)
+  }
+
   const deleteActive = (idDay, idActive) => {
     const newDays = days.map((d) => {
       if (d.id === idDay) {
@@ -75,8 +100,13 @@ const App = () => {
 
   return (
     <div>
+      {days.some(d => d.hide) && (<input
+        type="button"
+        value="Показать скрытые"
+        onClick={() => showHidden()}
+      />)}
       <ul>
-        {days.map((d) => (
+        {days.filter(d => !d.hide).map((d) => (
           <li key={d.id}>
             <span onClick={() => selectCurrentDay(d.id)}>
               Дата: {formatDate(d.date)} Сумма времени:
@@ -87,11 +117,15 @@ const App = () => {
             </span>
             {currentDay === d.id ? (
               <span>
-                <span>{'  << Текущий день  '}</span>
                 <input
                   type="button"
                   value="Удалить день"
                   onClick={() => deleteDay(d.id)}
+                />
+                <input
+                  type="button"
+                  value="Скрыть до сюда"
+                  onClick={() => hideTo(d.id)}
                 />
               </span>
             ) : (
